@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Phishing Awareness Training 2026 | VGreens Security Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --accent: #e63946;
+    --accent2: #f4a261;
+    --blue: #2196f3;
+    --green: #06d6a0;
+    --text: #e8edf7;
+    --text-dim: #8899b8;
+    --text-dimmer: #4a5a72;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --display: 'Bebas Neue', sans-serif;
+    --radius: 12px;
+    --glow-red: 0 0 30px rgba(230,57,70,0.25);
+    --glow-blue: 0 0 30px rgba(33,150,243,0.25);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── TOP NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,14,26,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--green);
+    letter-spacing: 0.05em;
+  }
+  .nav-logo span { color: var(--text-dim); }
+  .nav-badge {
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    border-radius: 100px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap {
+    position: fixed; top: 60px; left: 0; right: 0;
+    height: 3px; background: var(--border); z-index: 99;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    display: none;
+    min-height: 100vh;
+    padding: 80px 0 60px;
+    position: relative;
+    z-index: 1;
+  }
+  .screen.active { display: block; }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ── HERO SCREEN ── */
+  #screen-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(230,57,70,0.12) 0%, transparent 70%);
+  }
+  #screen-hero.active { display: flex; }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: ''; display: block;
+    width: 40px; height: 1px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .hero-title .highlight { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text-dim);
+    max-width: 520px;
+    line-height: 1.6;
+    margin: 1.5rem auto 2.5rem;
+    font-weight: 300;
+  }
+
+  .alert-banner {
+    background: rgba(230,57,70,0.1);
+    border: 1px solid rgba(230,57,70,0.35);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+    text-align: left;
+  }
+  .alert-banner .ab-title {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .alert-banner p {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .alert-banner strong { color: var(--text); }
+
+  .hero-meta {
+    display: flex; gap: 2rem; align-items: center;
+    margin-bottom: 2.5rem; flex-wrap: wrap; justify-content: center;
+  }
+  .meta-item {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.85rem; color: var(--text-dim);
+  }
+  .meta-item .icon { font-size: 1rem; }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 100px;
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 0 0 0 rgba(230,57,70,0.4);
+    letter-spacing: 0.02em;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(230,57,70,0.4);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 0.75rem 2rem;
+    border-radius: 100px;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    border-color: var(--text-dim);
+    color: var(--text);
+  }
+
+  /* ── MODULE OVERVIEW GRID ── */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  .module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    transition: border-color 0.2s;
+  }
+  .module-card:hover { border-color: var(--blue); }
+  .module-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dimmer);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+  }
+  .module-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+  .module-time {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-family: var(--mono);
+  }
+
+  /* ── VIDEO SCREEN ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .screen-title {
+    font-family: var(--display);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: 0.03em;
+    line-height: 1;
+    margin-bottom: 0.75rem;
+  }
+  .screen-desc {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    margin-bottom: 2rem;
+    font-weight: 300;
+    max-width: 620px;
+  }
+
+  .video-container {
+    position: relative;
+    background: #000;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    box-shadow: var(--glow-blue);
+  }
+
+  /* Custom animated video player */
+  .video-player {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: linear-gradient(135deg, #0d1b2e 0%, #0a0e1a 100%);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .video-scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    text-align: center;
+  }
+  .video-scene.active { opacity: 1; }
+
+  .scene-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+
+  .scene-title {
+    font-family: var(--display);
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    color: #fff;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.05em;
+  }
+  .scene-text {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.65);
+    max-width: 500px;
+    line-height: 1.6;
+  }
+  .scene-highlight {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.05rem;
+    font-family: var(--mono);
+    background: rgba(230,57,70,0.15);
+    padding: 6px 14px;
+    border-radius: 6px;
+    margin-top: 0.75rem;
+    display: inline-block;
+    border: 1px solid rgba(230,57,70,0.3);
+  }
+
+  /* Scanline overlay */
+  .video-player::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.05) 2px,
+      rgba(0,0,0,0.05) 4px
+    );
+    pointer-events: none;
+  }
+
+  .video-controls {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    padding: 2rem 1.5rem 1rem;
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
+
+  .vc-progress {
+    width: 100%; height: 3px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 100px;
+    cursor: pointer;
+    position: relative;
+  }
+  .vc-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 100px;
+    transition: width 0.3s linear;
+    pointer-events: none;
+  }
+
+  .vc-row {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .vc-btn {
+    background: none; border: none; cursor: pointer;
+    color: rgba(255,255,255,0.85); font-size: 1.1rem;
+    padding: 4px; border-radius: 4px;
+    transition: color 0.15s;
+    line-height: 1;
+  }
+  .vc-btn:hover { color: #fff; }
+  .vc-time {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.55);
+    margin-left: auto;
+  }
+  .vc-chapter {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.45);
+    letter-spacing: 0.05em;
+  }
+
+  /* Play overlay */
+  .play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.35);
+    transition: opacity 0.3s;
+    z-index: 10;
+  }
+  .play-overlay.hidden { opacity: 0; pointer-events: none; }
+  .play-btn-big {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: rgba(230,57,70,0.9);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 0 0 0 12px rgba(230,57,70,0.2);
+    transition: transform 0.2s;
+  }
+  .play-btn-big:hover { transform: scale(1.1); }
+
+  /* Chapter list */
+  .chapter-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .chapter-list-header {
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-dimmer);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .chapter-item {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .chapter-item:last-child { border-bottom: none; }
+  .chapter-item:hover { background: var(--surface2); }
+  .chapter-item.active { background: rgba(33,150,243,0.08); border-left: 3px solid var(--blue); }
+  .ch-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dimmer);
+    min-width: 28px;
+  }
+  .ch-name {
+    font-size: 0.88rem;
+    color: var(--text);
+    flex: 1;
+  }
+  .ch-duration {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+  .ch-done {
+    color: var(--green);
+    font-size: 0.85rem;
+  }
+
+  /* ── PHISHING EXAMPLES SCREEN ── */
+  .email-mock {
+    background: #1a1f2e;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    box-shadow: var(--glow-red);
+  }
+  .email-header {
+    background: rgba(230,57,70,0.07);
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(230,57,70,0.2);
+  }
+  .email-field {
+    display: flex; gap: 0.75rem;
+    font-size: 0.82rem;
+    margin-bottom: 0.3rem;
+  }
+  .email-field:last-child { margin-bottom: 0; }
+  .ef-label {
+    font-family: var(--mono);
+    color: var(--text-dimmer);
+    min-width: 60px;
+    font-size: 0.75rem;
+    padding-top: 1px;
+  }
+  .ef-val { color: var(--text); }
+  .ef-val .danger { color: var(--accent); font-family: var(--mono); font-size: 0.78rem; }
+  .ef-val .subject-text { font-weight: 600; color: var(--text); }
+  .email-body {
+    padding: 1.25rem;
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+  .email-body .fake-link {
+    color: var(--blue);
+    text-decoration: underline;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    opacity: 0.7;
+  }
+  .email-body .fake-btn {
+    display: inline-block;
+    background: rgba(33,150,243,0.15);
+    border: 1px solid rgba(33,150,243,0.3);
+    color: var(--blue);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    margin: 0.5rem 0;
+  }
+  .email-flags {
+    padding: 0.9rem 1.25rem;
+    background: rgba(230,57,70,0.05);
+    border-top: 1px solid rgba(230,57,70,0.15);
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+  }
+  .flag-tag {
+    background: rgba(230,57,70,0.12);
+    border: 1px solid rgba(230,57,70,0.25);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 3px 9px;
+    border-radius: 100px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  /* ── QUIZ SCREEN ── */
+  .quiz-progress {
+    display: flex; gap: 0.4rem; margin-bottom: 2rem;
+  }
+  .qp-dot {
+    flex: 1; height: 4px; border-radius: 100px;
+    background: var(--border); transition: background 0.3s;
+  }
+  .qp-dot.done { background: var(--green); }
+  .qp-dot.current { background: var(--accent); }
+
+  .quiz-q-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--text-dimmer);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .quiz-question {
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 1.75rem;
+  }
+  .quiz-options {
+    display: flex; flex-direction: column; gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .quiz-option {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    display: flex; align-items: flex-start; gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .quiz-option:hover:not(.disabled) {
+    border-color: var(--blue);
+    background: rgba(33,150,243,0.05);
+  }
+  .quiz-option.selected { border-color: var(--blue); background: rgba(33,150,243,0.08); }
+  .quiz-option.correct { border-color: var(--green) !important; background: rgba(6,214,160,0.08) !important; }
+  .quiz-option.wrong { border-color: var(--accent) !important; background: rgba(230,57,70,0.08) !important; }
+  .quiz-option.disabled { cursor: default; }
+  .opt-letter {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    font-weight: 700;
+    color: var(--text-dim);
+  }
+  .quiz-option.selected .opt-letter { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .quiz-option.correct .opt-letter { background: var(--green); border-color: var(--green); color: #000; }
+  .quiz-option.wrong .opt-letter { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .opt-text { font-size: 0.9rem; color: var(--text); line-height: 1.5; padding-top: 2px; }
+
+  .quiz-feedback {
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.good { background: rgba(6,214,160,0.1); border: 1px solid rgba(6,214,160,0.3); color: var(--green); }
+  .quiz-feedback.bad { background: rgba(230,57,70,0.1); border: 1px solid rgba(230,57,70,0.3); color: var(--accent); }
+
+  .quiz-nav {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .quiz-score-display {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  /* ── CERTIFICATE SCREEN ── */
+  #screen-cert {
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(6,214,160,0.1) 0%, transparent 70%);
+  }
+  #screen-cert.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+  .cert-card {
+    background: var(--surface);
+    border: 1px solid rgba(6,214,160,0.3);
+    border-radius: 20px;
+    padding: 3rem 2.5rem;
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(6,214,160,0.1);
+  }
+  .cert-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--green), var(--blue), var(--accent));
+  }
+  .cert-icon { font-size: 4rem; margin-bottom: 1rem; }
+  .cert-congrats {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--green);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .cert-name {
+    font-family: var(--display);
+    font-size: 2.5rem;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .cert-desc {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .cert-score-box {
+    display: inline-flex;
+    align-items: center; gap: 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.85rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .csb-score {
+    font-family: var(--display);
+    font-size: 2.2rem;
+    letter-spacing: 0.05em;
+    color: var(--green);
+  }
+  .csb-label {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    text-align: left;
+    line-height: 1.4;
+  }
+  .cert-date {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--text-dimmer);
+    margin-bottom: 2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .takeaways-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin: 2rem 0;
+    text-align: left;
+  }
+  .takeaway-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+    display: flex; align-items: flex-start; gap: 0.65rem;
+    font-size: 0.83rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+  .ti-icon { font-size: 1rem; flex-shrink: 0; }
+
+  .golden-rule {
+    background: rgba(230,57,70,0.08);
+    border: 1px solid rgba(230,57,70,0.25);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+  }
+  .gr-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .gr-text {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.4;
+  }
+
+  /* ── FOOTER ── */
+  .screen-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .sf-link {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dimmer);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .sf-link:hover { color: var(--blue); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.6s ease forwards; }
+  .fade-up-d1 { animation-delay: 0.1s; opacity: 0; }
+  .fade-up-d2 { animation-delay: 0.2s; opacity: 0; }
+  .fade-up-d3 { animation-delay: 0.3s; opacity: 0; }
+  .fade-up-d4 { animation-delay: 0.4s; opacity: 0; }
+  .fade-up-d5 { animation-delay: 0.5s; opacity: 0; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .takeaways-grid { grid-template-columns: 1fr; }
+    .module-grid { grid-template-columns: 1fr 1fr; }
+    .cert-card { padding: 2rem 1.25rem; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 100px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dimmer); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span>🛡️ </span>VGREENS SECURITY ACADEMY
+  </div>
+  <div class="nav-badge">Mandatory Training</div>
+</nav>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SCREEN 0: HERO / WELCOME              -->
+<!-- ═══════════════════════════════════════ -->
+<section class="screen active" id="screen-hero">
+  <div class="container" style="text-align:center; padding-top:3rem;">
+    <div class="hero-eyebrow fade-up">Real Incident — 2026</div>
+    <h1 class="hero-title fade-up fade-up-d1">
+      DON'T<br><span class="highlight">TAKE</span><br>THE BAIT
+    </h1>
+    <p class="hero-sub fade-up fade-up-d2">
+      A phishing attack recently targeted our organization. This 5-minute training is based on what actually happened — and what you need to know to stop it.
+    </p>
+    <div class="alert-banner fade-up fade-up-d3">
+      <div class="ab-title">⚠ Real Incident — Action Required</div>
+      <p>Microsoft 365 Defender quarantined multiple phishing emails sent to staff using the subject <strong>"Signature Required – 2026 Employee Agreement."</strong> You may receive a quarantine notification. Do NOT release the email without IT Security approval.</p>
+    </div>
+    <div class="hero-meta fade-up fade-up-d4">
+      <span class="meta-item"><span class="icon">⏱</span> ~5 minutes</span>
+      <span class="meta-item"><span class="icon">🎓</span> 7-question quiz</span>
+      <span class="meta-item"><span class="icon">📋</span> Certificate on completion</span>
+      <span class="meta-item"><span class="icon">🔒</span> Mandatory for all employees</span>
+    </div>
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;" class="fade-up fade-up-d5">
+      <button class="btn-primary" onclick="goTo('screen-video')">▶ Start Training</button>
+      <button class="btn-secondary" onclick="goTo('screen-examples')">View Phishing Examples</button>
+    </div>
+
+    <div class="module-grid" style="margin-top:3rem; text-align:left;">
+      <div class="module-card"><div class="module-num">MODULE 01</div><div class="module-name">The Real Incident</div><div class="module-time">~45 sec</div></div>
+      <div class="module-card"><div class="module-num">MODULE 02</div><div class="module-name">What Is Phishing?</div><div class="module-time">~45 sec</div></div>
+      <div class="module-card"><div class="module-num">MODULE 03</div><div class="module-name">Spotting the Attack</div><div class="module-time">~60 sec</div></div>
+      <div class="module-card"><div class="module-num">MODULE 04</div><div class="module-name">Red Flags</div><div class="module-time">~45 sec</div></div>
+      <div class="module-card"><div class="module-num">MODULE 05</div><div class="module-name">Quarantine Alerts</div><div class="module-time">~30 sec</div></div>
+      <div class="module-card"><div class="module-num">MODULE 06</div><div class="module-name">Your Required Actions</div><div class="module-time">~30 sec</div></div>
+      <div class="module-card"><div class="module-num">MODULE 07</div><div class="module-name">Knowledge Quiz</div><div class="module-time">~60 sec</div></div>
+      <div class="module-card"><div class="module-num">MODULE 08</div><div class="module-name">Certificate</div><div class="module-time">~25 sec</div></div>
+    </div>
+
+    <div class="screen-footer">
+      <a href="https://vgreens-security-academy.pages.dev" class="sf-link">🔗 vgreens-security-academy.pages.dev</a>
+      <span style="font-family:var(--mono); font-size:0.72rem; color:var(--text-dimmer);">VGreens IT Security Team · 2026</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SCREEN 1: VIDEO TRAINING              -->
+<!-- ═══════════════════════════════════════ -->
+<section class="screen" id="screen-video">
+  <div class="container">
+    <div class="section-label">Module Training</div>
+    <h2 class="screen-title">PHISHING<br>AWARENESS</h2>
+    <p class="screen-desc">Watch the full training video below. Use the chapter list to jump to any section. Complete all modules to unlock the quiz.</p>
+
+    <div class="video-container">
+      <div class="video-player" id="videoPlayer" onclick="togglePlay()">
+
+        <!-- SCENE 1: Incident -->
+        <div class="video-scene active" id="scene-0">
+          <div class="scene-icon">🚨</div>
+          <div class="scene-title">WE WERE TARGETED</div>
+          <div class="scene-text">Microsoft 365 Defender recently detected and blocked multiple phishing emails sent to staff across our organization.</div>
+          <div class="scene-highlight">"Signature Required – 2026 Employee Agreement"</div>
+        </div>
+        <!-- SCENE 2: What is phishing -->
+        <div class="video-scene" id="scene-1">
+          <div class="scene-icon">🎣</div>
+          <div class="scene-title">WHAT IS PHISHING?</div>
+          <div class="scene-text">Attackers send convincing fake emails — the bait — hoping you'll click a link or hand over your password. If you do, they've caught you.</div>
+          <div class="scene-highlight">A single click can put the entire organization at risk.</div>
+        </div>
+        <!-- SCENE 3: Story -->
+        <div class="video-scene" id="scene-2">
+          <div class="scene-icon">👩‍💻</div>
+          <div class="scene-title">MEET SARAH</div>
+          <div class="scene-text">Monday morning. An email lands: "Signature Required." The sender is hr-team@company-docs.net — not our real domain. There's a link. Deadline: today. Sarah pauses. Thinks. And reports it.</div>
+          <div class="scene-highlight" style="color:var(--green); border-color:rgba(6,214,160,0.3); background:rgba(6,214,160,0.1);">Sarah protected the whole company.</div>
+        </div>
+        <!-- SCENE 4: Red Flags -->
+        <div class="video-scene" id="scene-3">
+          <div class="scene-icon">🚩</div>
+          <div class="scene-title">6 RED FLAGS</div>
+          <div class="scene-text">Unexpected request · Unusual sender domain · Urgency ("act now") · Password request · Suspicious link · Spelling errors. If you spot any one of these — stop and report.</div>
+          <div class="scene-highlight">IT Security will NEVER ask for your password by email.</div>
+        </div>
+        <!-- SCENE 5: Quarantine -->
+        <div class="video-scene" id="scene-4">
+          <div class="scene-icon">📥</div>
+          <div class="scene-title">QUARANTINE ALERTS</div>
+          <div class="scene-text">You may receive a Microsoft 365 quarantine notification. The notification is legitimate. But the quarantined email may be malicious.</div>
+          <div class="scene-highlight">Do NOT release quarantined emails without IT Security approval.</div>
+        </div>
+        <!-- SCENE 6: Actions -->
+        <div class="video-scene" id="scene-5">
+          <div class="scene-icon">✅</div>
+          <div class="scene-title">YOUR REQUIRED ACTIONS</div>
+          <div class="scene-text">1. Don't click suspicious links or attachments. 2. Don't enter passwords from email links. 3. Report to IT Security immediately. 4. Delete after reporting. 5. If you clicked — call IT now.</div>
+          <div class="scene-highlight" style="color:var(--blue); border-color:rgba(33,150,243,0.3); background:rgba(33,150,243,0.1);">vgreens-security-academy.pages.dev</div>
+        </div>
+        <!-- SCENE 7: Quiz -->
+        <div class="video-scene" id="scene-6">
+          <div class="scene-icon">📝</div>
+          <div class="scene-title">TEST YOUR KNOWLEDGE</div>
+          <div class="scene-text">You've completed all 6 training modules. Now test what you've learned with a short 7-question quiz. You need 5/7 to pass.</div>
+          <div class="scene-highlight" style="color:var(--green); border-color:rgba(6,214,160,0.3); background:rgba(6,214,160,0.1);">Training complete — take the quiz!</div>
+        </div>
+
+        <!-- Play overlay -->
+        <div class="play-overlay" id="playOverlay">
+          <button class="play-btn-big" onclick="togglePlay(event)">▶</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="video-controls">
+          <div class="vc-progress" id="vcProgress" onclick="scrubVideo(event)">
+            <div class="vc-progress-fill" id="vcFill" style="width:0%"></div>
+          </div>
+          <div class="vc-row">
+            <button class="vc-btn" id="playPauseBtn" onclick="togglePlay(event)">▶</button>
+            <button class="vc-btn" onclick="prevScene()">⏮</button>
+            <button class="vc-btn" onclick="nextScene()">⏭</button>
+            <span class="vc-chapter" id="vcChapter">Module 1 — The Real Incident</span>
+            <span class="vc-time" id="vcTime">0:00 / 5:20</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter list -->
+    <div class="chapter-list">
+      <div class="chapter-list-header">Course Chapters</div>
+      <div class="chapter-item active" id="ch-0" onclick="jumpToScene(0)">
+        <span class="ch-num">01</span>
+        <span class="ch-name">The Real Incident</span>
+        <span class="ch-duration">0:45</span>
+        <span class="ch-done" id="chd-0"></span>
+      </div>
+      <div class="chapter-item" id="ch-1" onclick="jumpToScene(1)">
+        <span class="ch-num">02</span>
+        <span class="ch-name">What Is Phishing?</span>
+        <span class="ch-duration">0:45</span>
+        <span class="ch-done" id="chd-1"></span>
+      </div>
+      <div class="chapter-item" id="ch-2" onclick="jumpToScene(2)">
+        <span class="ch-num">03</span>
+        <span class="ch-name">Story: Meet Sarah</span>
+        <span class="ch-duration">1:00</span>
+        <span class="ch-done" id="chd-2"></span>
+      </div>
+      <div class="chapter-item" id="ch-3" onclick="jumpToScene(3)">
+        <span class="ch-num">04</span>
+        <span class="ch-name">Red Flags to Watch For</span>
+        <span class="ch-duration">0:45</span>
+        <span class="ch-done" id="chd-3"></span>
+      </div>
+      <div class="chapter-item" id="ch-4" onclick="jumpToScene(4)">
+        <span class="ch-num">05</span>
+        <span class="ch-name">Quarantine Notifications</span>
+        <span class="ch-duration">0:30</span>
+        <span class="ch-done" id="chd-4"></span>
+      </div>
+      <div class="chapter-item" id="ch-5" onclick="jumpToScene(5)">
+        <span class="ch-num">06</span>
+        <span class="ch-name">Your Required Actions</span>
+        <span class="ch-duration">0:30</span>
+        <span class="ch-done" id="chd-5"></span>
+      </div>
+      <div class="chapter-item" id="ch-6" onclick="jumpToScene(6)">
+        <span class="ch-num">07</span>
+        <span class="ch-name">Complete — Take the Quiz</span>
+        <span class="ch-duration">—</span>
+        <span class="ch-done" id="chd-6"></span>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <button class="btn-primary" onclick="goTo('screen-quiz')" id="quizBtn">Take the Quiz →</button>
+      <button class="btn-secondary" onclick="goTo('screen-examples')">View Phishing Examples</button>
+      <button class="btn-secondary" onclick="goTo('screen-hero')">← Back</button>
+    </div>
+
+    <div class="screen-footer">
+      <a href="https://vgreens-security-academy.pages.dev" class="sf-link">🔗 vgreens-security-academy.pages.dev</a>
+      <span style="font-family:var(--mono); font-size:0.72rem; color:var(--text-dimmer);">IT Security · VGreens</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SCREEN 2: PHISHING EXAMPLES           -->
+<!-- ═══════════════════════════════════════ -->
+<section class="screen" id="screen-examples">
+  <div class="container">
+    <div class="section-label">Real-World Examples</div>
+    <h2 class="screen-title">SPOT THE<br>PHISH</h2>
+    <p class="screen-desc">These examples are based on actual phishing techniques. Each one contains red flags — see if you can spot them before reading the tags.</p>
+
+    <!-- Email 1 -->
+    <div class="email-mock">
+      <div class="email-header">
+        <div class="email-field">
+          <span class="ef-label">From:</span>
+          <span class="ef-val"><span class="danger">⚠ hr-noreply@company-docs-online.net</span> &nbsp;(NOT our real domain)</span>
+        </div>
+        <div class="email-field">
+          <span class="ef-label">To:</span>
+          <span class="ef-val">All Staff</span>
+        </div>
+        <div class="email-field">
+          <span class="ef-label">Subject:</span>
+          <span class="ef-val"><span class="subject-text">Signature Required – 2026 Employee Agreement</span></span>
+        </div>
+        <div class="email-field">
+          <span class="ef-label">Date:</span>
+          <span class="ef-val">Mon, 11 May 2026, 09:14</span>
+        </div>
+      </div>
+      <div class="email-body">Dear Team Member,
+
+As part of our annual compliance process, all employees are required to review and sign the <strong>2026 Employee Agreement</strong>.
+
+<strong style="color:#e63946">This must be completed by end of business TODAY to remain in compliance.</strong>
+
+Please click below to review and sign:
+
+<span class="fake-btn">[ CLICK HERE TO SIGN YOUR AGREEMENT ]</span>
+<span class="fake-link">hxxp://employee-docs-sign.malicious-site.com/agree2026</span>
+
+If you have questions, contact us at hr@company-docs-online.net
+
+Best regards,
+Human Resources Department</div>
+      <div class="email-flags">
+        <span class="flag-tag">⚠ Wrong Domain</span>
+        <span class="flag-tag">⚠ False Urgency</span>
+        <span class="flag-tag">⚠ Unexpected Request</span>
+        <span class="flag-tag">⚠ Suspicious Link</span>
+        <span class="flag-tag">⚠ Not From IT/HR</span>
+      </div>
+    </div>
+
+    <!-- Email 2 -->
+    <div class="email-mock">
+      <div class="email-header">
+        <div class="email-field">
+          <span class="ef-label">From:</span>
+          <span class="ef-val"><span class="danger">⚠ it-support@microsoft-secure-login.com</span> &nbsp;(Not Microsoft)</span>
+        </div>
+        <div class="email-field">
+          <span class="ef-label">Subject:</span>
+          <span class="ef-val"><span class="subject-text">ACTION REQUIRED: Your account will be locked in 24 hours</span></span>
+        </div>
+      </div>
+      <div class="email-body">Hello,
+
+Our security system has detected unusual login activity on your Microsoft 365 account.
+
+<strong style="color:#e63946">To prevent your account from being locked, you must verify your password immediately.</strong>
+
+<span class="fake-btn">[ VERIFY PASSWORD NOW ]</span>
+<span class="fake-link">hxxp://m1crosoft-verify.support-login.net/reset</span>
+
+If you do not complete this within 24 hours, your access will be suspended.
+
+IT Security Team</div>
+      <div class="email-flags">
+        <span class="flag-tag">⚠ Fake Microsoft Domain</span>
+        <span class="flag-tag">⚠ Password Request</span>
+        <span class="flag-tag">⚠ Extreme Urgency</span>
+        <span class="flag-tag">⚠ IT NEVER Asks Passwords</span>
+        <span class="flag-tag">⚠ Suspicious URL (m1crosoft)</span>
+      </div>
+    </div>
+
+    <!-- Email 3 -->
+    <div class="email-mock">
+      <div class="email-header">
+        <div class="email-field">
+          <span class="ef-label">From:</span>
+          <span class="ef-val"><span class="danger">⚠ ceo.office@yourcompany-finance.org</span> &nbsp;(Impersonating CEO)</span>
+        </div>
+        <div class="email-field">
+          <span class="ef-label">Subject:</span>
+          <span class="ef-val"><span class="subject-text">Urgent – Wire Transfer Needed Today</span></span>
+        </div>
+      </div>
+      <div class="email-body">Hi,
+
+I need you to process an urgent wire transfer of $14,750 to one of our new vendors.
+
+<strong style="color:#e63946">This is time-sensitive and confidential — please do not discuss with other staff until it's complete.</strong>
+
+Vendor banking details:
+Account: 8823-4491-XX | Routing: 0612-XXXX
+
+Let me know once done.
+
+Thanks,
+James (CEO)</div>
+      <div class="email-flags">
+        <span class="flag-tag">⚠ CEO Impersonation</span>
+        <span class="flag-tag">⚠ Secrecy Demand</span>
+        <span class="flag-tag">⚠ Urgency</span>
+        <span class="flag-tag">⚠ Financial Request</span>
+        <span class="flag-tag">⚠ Wrong Domain</span>
+      </div>
+    </div>
+
+    <div class="golden-rule">
+      <div class="gr-label">Golden Rule</div>
+      <div class="gr-text">IT Security will NEVER ask for your password via email. Any email requesting your password is always a phishing attempt — always.</div>
+    </div>
+
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <button class="btn-primary" onclick="goTo('screen-quiz')">Take the Quiz →</button>
+      <button class="btn-secondary" onclick="goTo('screen-video')">← Back to Training</button>
+    </div>
+
+    <div class="screen-footer">
+      <a href="https://vgreens-security-academy.pages.dev" class="sf-link">🔗 vgreens-security-academy.pages.dev</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SCREEN 3: QUIZ                        -->
+<!-- ═══════════════════════════════════════ -->
+<section class="screen" id="screen-quiz">
+  <div class="container">
+    <div class="section-label">Knowledge Check</div>
+    <h2 class="screen-title">QUIZ</h2>
+    <p class="screen-desc">7 questions based on your training. You need 5/7 to pass and receive your certificate.</p>
+
+    <div class="quiz-progress" id="quizProgress">
+      <div class="qp-dot current" id="qdot-0"></div>
+      <div class="qp-dot" id="qdot-1"></div>
+      <div class="qp-dot" id="qdot-2"></div>
+      <div class="qp-dot" id="qdot-3"></div>
+      <div class="qp-dot" id="qdot-4"></div>
+      <div class="qp-dot" id="qdot-5"></div>
+      <div class="qp-dot" id="qdot-6"></div>
+    </div>
+
+    <div id="quizBody">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SCREEN 4: CERTIFICATE                 -->
+<!-- ═══════════════════════════════════════ -->
+<section class="screen" id="screen-cert">
+  <div class="container">
+    <div class="cert-card">
+      <div class="cert-icon">🏆</div>
+      <div class="cert-congrats">Training Complete</div>
+      <div class="cert-name">WELL DONE!</div>
+      <div class="cert-desc">You have successfully completed the Phishing Awareness & Email Safety training course based on a real incident.</div>
+
+      <div class="cert-score-box">
+        <div class="csb-score" id="certScore">7/7</div>
+        <div class="csb-label">Quiz Score<br><span style="color:var(--green); font-size:0.75rem;">✓ Passed</span></div>
+      </div>
+
+      <div class="cert-date" id="certDate">Completed: May 11, 2026</div>
+
+      <div class="takeaways-grid">
+        <div class="takeaway-item"><span class="ti-icon">🔴</span>Never click suspicious links or attachments</div>
+        <div class="takeaway-item"><span class="ti-icon">🔐</span>IT Security never asks for passwords by email</div>
+        <div class="takeaway-item"><span class="ti-icon">📣</span>Report suspicious emails immediately</div>
+        <div class="takeaway-item"><span class="ti-icon">🗑️</span>Delete after reporting</div>
+        <div class="takeaway-item"><span class="ti-icon">📥</span>Don't release quarantine without IT approval</div>
+        <div class="takeaway-item"><span class="ti-icon">🚨</span>Clicked a link? Call IT Security now</div>
+      </div>
+
+      <div class="golden-rule" style="text-align:left;">
+        <div class="gr-label">Remember</div>
+        <div class="gr-text" style="font-size:0.95rem;">A single click can put the entire organization at risk. You are the last line of defense.</div>
+      </div>
+
+      <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; margin-top:1.5rem;">
+        <button class="btn-primary" onclick="window.open('https://vgreens-security-academy.pages.dev','_blank')">More Training Resources ↗</button>
+        <button class="btn-secondary" onclick="restartCourse()">Restart Course</button>
+      </div>
+
+      <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); text-align:center;">
+        <a href="https://vgreens-security-academy.pages.dev" style="font-family:var(--mono); font-size:0.8rem; color:var(--blue); text-decoration:none;">🔗 vgreens-security-academy.pages.dev</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════ -->
+<script>
+/* ── NAVIGATION ── */
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  window.scrollTo(0,0);
+  updateProgress(screenId);
+  if (screenId === 'screen-quiz') renderQuiz();
+}
+
+function updateProgress(screenId) {
+  const map = { 'screen-hero':0, 'screen-video':33, 'screen-examples':50, 'screen-quiz':66, 'screen-cert':100 };
+  document.getElementById('progressBar').style.width = (map[screenId] || 0) + '%';
+}
+
+/* ── VIDEO PLAYER ── */
+const scenes = [
+  { name: "Module 1 — The Real Incident", duration: 45 },
+  { name: "Module 2 — What Is Phishing?", duration: 45 },
+  { name: "Module 3 — Story: Meet Sarah", duration: 60 },
+  { name: "Module 4 — Red Flags", duration: 45 },
+  { name: "Module 5 — Quarantine Notifications", duration: 30 },
+  { name: "Module 6 — Your Required Actions", duration: 30 },
+  { name: "Module 7 — Complete!", duration: 5 },
+];
+const totalDuration = scenes.reduce((a,s) => a+s.duration, 0);
+
+let currentScene = 0;
+let isPlaying = false;
+let elapsed = 0;
+let intervalId = null;
+let watchedScenes = new Set();
+
+function showScene(idx) {
+  document.querySelectorAll('.video-scene').forEach((s,i) => s.classList.toggle('active', i===idx));
+  document.querySelectorAll('.chapter-item').forEach((c,i) => c.classList.toggle('active', i===idx));
+  document.getElementById('vcChapter').textContent = scenes[idx].name;
+  currentScene = idx;
+}
+
+function jumpToScene(idx) {
+  // calc elapsed up to start of this scene
+  let e = 0;
+  for (let i=0; i<idx; i++) e += scenes[i].duration;
+  elapsed = e;
+  showScene(idx);
+  updateVCTime();
+}
+
+function togglePlay(e) {
+  if (e) e.stopPropagation();
+  isPlaying = !isPlaying;
+  document.getElementById('playPauseBtn').textContent = isPlaying ? '⏸' : '▶';
+  document.getElementById('playOverlay').classList.toggle('hidden', isPlaying);
+  if (isPlaying) {
+    intervalId = setInterval(() => {
+      elapsed++;
+      // find which scene
+      let acc = 0, scIdx = 0;
+      for (let i=0; i<scenes.length; i++) {
+        if (elapsed <= acc + scenes[i].duration) { scIdx = i; break; }
+        acc += scenes[i].duration;
+        scIdx = scenes.length - 1;
+      }
+      if (scIdx !== currentScene) { showScene(scIdx); }
+      watchedScenes.add(scIdx);
+      markChapterDone();
+      if (elapsed >= totalDuration) {
+        clearInterval(intervalId); isPlaying = false;
+        document.getElementById('playPauseBtn').textContent = '▶';
+        document.getElementById('playOverlay').classList.remove('hidden');
+        watchedScenes = new Set([0,1,2,3,4,5,6]);
+        markChapterDone();
+      }
+      updateVCTime();
+    }, 1000);
+  } else {
+    clearInterval(intervalId);
+  }
+}
+
+function markChapterDone() {
+  watchedScenes.forEach(i => {
+    document.getElementById('chd-'+i).textContent = '✓';
+  });
+}
+
+function nextScene() {
+  watchedScenes.add(currentScene);
+  markChapterDone();
+  if (currentScene < scenes.length-1) jumpToScene(currentScene+1);
+}
+function prevScene() {
+  if (currentScene > 0) jumpToScene(currentScene-1);
+}
+
+function updateVCTime() {
+  const pct = Math.min((elapsed/totalDuration)*100, 100);
+  document.getElementById('vcFill').style.width = pct + '%';
+  const fmt = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  document.getElementById('vcTime').textContent = `${fmt(elapsed)} / ${fmt(totalDuration)}`;
+}
+
+function scrubVideo(e) {
+  const rect = document.getElementById('vcProgress').getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left)/rect.width));
+  elapsed = Math.floor(pct * totalDuration);
+  // find scene
+  let acc = 0, scIdx = 0;
+  for (let i=0; i<scenes.length; i++) {
+    if (elapsed <= acc + scenes[i].duration) { scIdx = i; break; }
+    acc += scenes[i].duration;
+  }
+  showScene(scIdx);
+  updateVCTime();
+}
+
+/* ── QUIZ ── */
+const questions = [
+  {
+    q: "You receive an email: \"Signature Required – 2026 Employee Agreement\" from hr-noreply@company-docs.net. What should you do first?",
+    opts: ["Click the link quickly to verify it", "Check if the sender's domain matches our official company domain", "Forward to a colleague for their opinion", "Open the attachment to read the agreement"],
+    answer: 1,
+    feedback: { good: "✓ Correct! Always check the sender's full email address before doing anything else. Fake domains are the #1 giveaway.", bad: "✗ Incorrect. Always verify the sender's email domain first. Never click links in unexpected emails." }
+  },
+  {
+    q: "You receive a Microsoft 365 quarantine notification. What is the correct action?",
+    opts: ["Click 'Release' to retrieve the email immediately", "Ignore it — it's probably spam", "Contact IT Security before releasing or interacting with the quarantined email", "Forward the notification to your manager"],
+    answer: 2,
+    feedback: { good: "✓ Correct! The notification itself is legitimate, but the quarantined email may still be malicious. Always check with IT Security first.", bad: "✗ Incorrect. Never release quarantined emails without IT Security approval — the email may be malicious." }
+  },
+  {
+    q: "An email from 'IT Support' asks you to click a link and re-enter your password. What is true?",
+    opts: ["This is normal — IT regularly uses email for password verification", "You should comply — account lockouts are serious", "IT Security will NEVER ask for your password via email — this is phishing", "Enter your password but change it immediately after"],
+    answer: 2,
+    feedback: { good: "✓ Correct! IT Security will NEVER ask for your password via email. This is the golden rule — no exceptions.", bad: "✗ Incorrect. This is the golden rule: IT Security will NEVER ask for your password by email. Always." }
+  },
+  {
+    q: "Which of these is a phishing red flag?",
+    opts: ["A colleague emails about a project you're both working on", "An unexpected email saying 'Act now — expires today'", "A calendar invite from your manager for a team meeting", "A company newsletter sent every Monday"],
+    answer: 1,
+    feedback: { good: "✓ Correct! Artificial urgency ('act now', 'expires today') is a classic pressure tactic used by attackers to stop you from thinking critically.", bad: "✗ Incorrect. Urgency language like 'act now' or 'expires today' is a classic phishing pressure tactic." }
+  },
+  {
+    q: "You accidentally clicked a link in a suspicious email. What do you do?",
+    opts: ["Wait to see if anything bad happens", "Delete the email and hope for the best", "Contact IT Security immediately and tell them what happened", "Only act if you also entered your password"],
+    answer: 2,
+    feedback: { good: "✓ Correct! Time matters. Contact IT Security immediately — even if you didn't enter any credentials. Quick action limits damage.", bad: "✗ Incorrect. Contact IT Security immediately after any suspicious click — speed is critical." }
+  },
+  {
+    q: "How can you safely check where a link in an email goes BEFORE clicking it?",
+    opts: ["Click it quickly and close the page if it looks wrong", "Hover your mouse over the link to preview the actual destination URL", "Copy it into a search engine", "All links are safe if the email looks professional"],
+    answer: 1,
+    feedback: { good: "✓ Correct! Hovering over a link (without clicking) reveals the real destination URL in your browser's status bar.", bad: "✗ Incorrect. Hover over a link to preview its actual URL — without clicking it." }
+  },
+  {
+    q: "Where can you find ongoing cybersecurity training for our organization?",
+    opts: ["On personal social media only", "By calling main reception", "At https://vgreens-security-academy.pages.dev", "Only in the printed employee handbook"],
+    answer: 2,
+    feedback: { good: "✓ Correct! Visit vgreens-security-academy.pages.dev for all security resources, training modules, and updates.", bad: "✗ Incorrect. Visit https://vgreens-security-academy.pages.dev for all official security training." }
+  }
+];
+
+let quizState = { current: 0, score: 0, answered: [] };
+
+function renderQuiz() {
+  if (quizState.current >= questions.length) { showCert(); return; }
+  const q = questions[quizState.current];
+  const idx = quizState.current;
+  const body = document.getElementById('quizBody');
+
+  // Update progress dots
+  for (let i=0; i<7; i++) {
+    const dot = document.getElementById('qdot-'+i);
+    dot.className = 'qp-dot';
+    if (i < idx) dot.classList.add('done');
+    else if (i === idx) dot.classList.add('current');
+  }
+
+  const prevAnswer = quizState.answered[idx];
+  const isAnswered = prevAnswer !== undefined;
+
+  body.innerHTML = `
+    <div class="quiz-q-label">Question ${idx+1} of ${questions.length}</div>
+    <div class="quiz-question">${q.q}</div>
+    <div class="quiz-options" id="quizOpts">
+      ${q.opts.map((opt, oi) => {
+        let cls = 'quiz-option';
+        if (isAnswered) {
+          cls += ' disabled';
+          if (oi === q.answer) cls += ' correct';
+          else if (oi === prevAnswer && prevAnswer !== q.answer) cls += ' wrong';
+        }
+        return `<button class="${cls}" onclick="selectAnswer(${oi})">
+          <span class="opt-letter">${String.fromCharCode(65+oi)}</span>
+          <span class="opt-text">${opt}</span>
+        </button>`;
+      }).join('')}
+    </div>
+    <div class="quiz-feedback ${isAnswered ? 'show' : ''} ${isAnswered ? (prevAnswer===q.answer?'good':'bad') : ''}" id="quizFeedback">
+      ${isAnswered ? (prevAnswer===q.answer ? q.feedback.good : q.feedback.bad) : ''}
+    </div>
+    <div class="quiz-nav">
+      ${idx > 0 ? `<button class="btn-secondary" onclick="prevQuestion()">← Previous</button>` : '<span></span>'}
+      <span class="quiz-score-display">Score: ${quizState.score}/${idx}</span>
+      ${isAnswered ? `<button class="btn-primary" onclick="nextQuestion()">${idx < questions.length-1 ? 'Next →' : 'See Results →'}</button>` : '<span></span>'}
+    </div>
+  `;
+}
+
+function selectAnswer(optIdx) {
+  if (quizState.answered[quizState.current] !== undefined) return;
+  const q = questions[quizState.current];
+  quizState.answered[quizState.current] = optIdx;
+  if (optIdx === q.answer) quizState.score++;
+  renderQuiz();
+}
+
+function nextQuestion() {
+  quizState.current++;
+  if (quizState.current >= questions.length) showCert();
+  else renderQuiz();
+}
+function prevQuestion() {
+  if (quizState.current > 0) { quizState.current--; renderQuiz(); }
+}
+
+function showCert() {
+  const s = quizState.score;
+  const t = questions.length;
+  const passed = s >= 5;
+  document.getElementById('certScore').textContent = `${s}/${t}`;
+  document.getElementById('certScore').style.color = passed ? 'var(--green)' : 'var(--accent2)';
+  document.getElementById('certDate').textContent = `Completed: ${new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})}`;
+  goTo('screen-cert');
+}
+
+function restartCourse() {
+  quizState = { current: 0, score: 0, answered: [] };
+  elapsed = 0; currentScene = 0; isPlaying = false;
+  clearInterval(intervalId);
+  watchedScenes = new Set();
+  showScene(0); updateVCTime();
+  goTo('screen-hero');
+}
+</script>
+</body>
+</html>
